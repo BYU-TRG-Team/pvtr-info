@@ -124,7 +124,11 @@ class LicenseImportService
         }
 
         foreach (['!n/j/Y', '!m/d/Y', '!Y-m-d'] as $format) {
-            $date = CarbonImmutable::createFromFormat($format, $value);
+            try {
+                $date = CarbonImmutable::createFromFormat($format, $value);
+            } catch (\Throwable) {
+                continue;
+            }
 
             if ($date instanceof CarbonImmutable && $date->format(str_replace('!', '', $format)) === $value) {
                 return $date;

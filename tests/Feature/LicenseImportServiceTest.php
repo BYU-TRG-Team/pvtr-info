@@ -33,6 +33,29 @@ class LicenseImportServiceTest extends TestCase
         $this->assertSame('updated@example.com', $updated->email);
     }
 
+    public function test_malformed_rows_are_skipped_while_valid_rows_are_imported(): void
+    {
+        $batch = app(LicenseImportService::class)->import($this->writeTxt([
+            ['100-001', '01126', 'Valid Person', 'Individual', 'Active', 'valid@example.com', '5/31/2029'],
+            ['', '01126', 'Missing License Number', 'Individual', 'Active', 'missing@example.com', '5/31/2029'],
+            ['100-003', '01126', 'Invalid Date', 'Individual', 'Active', 'date@example.com', 'not-a-date'],
+            ['100-004', '01126', '', 'Individual', 'Active', 'name@example.com', '5/31/2029'],
+            ['100-005', '01126', 'Missing Status', 'Individual', '', 'status@example.com', '5/31/2029'],
+        ]), 'malformed-rows.txt');
+
+        $this->assertSame(5, $batch->total_rows);
+        $this->assertSame(1, $batch->imported_rows);
+        $this->assertSame(4, $batch->skipped_rows);
+        $this->assertDatabaseCount('license_records', 1);
+        $this->assertDatabaseHas('license_records', [
+            'license_number' => '100-001',
+            'entity_name' => 'Valid Person',
+        ]);
+        $this->assertDatabaseMissing('license_records', ['license_number' => '100-003']);
+        $this->assertDatabaseMissing('license_records', ['license_number' => '100-004']);
+        $this->assertDatabaseMissing('license_records', ['license_number' => '100-005']);
+    }
+
     /**
      * @param  array<int, array<int, string>>  $rows
      */

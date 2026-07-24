@@ -76,11 +76,44 @@ class AdminAuthAndImportTest extends TestCase
             ->assertSessionHasErrors('license_file');
     }
 
-    private function uploadedTxtFile(): UploadedFile
+    public function test_upload_with_unrecognized_headers_returns_an_error_without_writing_to_the_database(): void
+    {
+        Storage::fake('local');
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->from(route('admin.imports.index'))
+            ->post(route('admin.imports.store'), [
+                'license_file' => $this->uploadedTxtFile([
+                    'License Number',
+                    'License prefix',
+                    'Entity name',
+                    'Entity type',
+                    'License status',
+                    'Email',
+                    'Expiration date',
+                ]),
+            ]);
+
+        $response
+            ->assertRedirect(route('admin.imports.index'))
+            ->assertSessionHasErrors([
+                'license_file' => 'The uploaded file is missing the expected license headers.',
+            ]);
+
+        $this->assertDatabaseCount('import_batches', 0);
+        $this->assertDatabaseCount('license_records', 0);
+        Storage::disk('local')->assertDirectoryEmpty('imports');
+    }
+
+    /**
+     * @param  array<int, string>|null  $header
+     */
+    private function uploadedTxtFile(?array $header = null): UploadedFile
     {
         $path = sys_get_temp_dir().DIRECTORY_SEPARATOR.uniqid('license_upload_', true).'.txt';
         $contents = implode("\n", [
-            implode("\t", ['License #', 'License prefix', 'Entity name', 'Entity type', 'License status', 'Email', 'Expiration date']),
+            implode("\t", $header ?? ['License #', 'License prefix', 'Entity name', 'Entity type', 'License status', 'Email', 'Expiration date']),
             implode("\t", ['100-001', '01126', 'Example Person', 'Individual', 'Active', 'person@example.com', '5/31/2029']),
         ]);
 
