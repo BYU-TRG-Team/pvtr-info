@@ -7,8 +7,8 @@ Laravel application for public license verification and license-data administrat
 Requirements: PHP 8.3+, Composer, Node.js, and npm.
 
 ```bash
-git clone git@github.com:FutureLithics/laravel-pvtr.git
-cd laravel-pvtr
+git clone git@github.com:BYU-TRG-Team/pvtr-info.git
+cd pvtr-info
 cp .env.example .env
 touch database/database.sqlite
 composer run setup
@@ -66,7 +66,7 @@ ssh-keygen -t ed25519 -C "pvtr-bluehost-deploy" -f ~/.ssh/pvtr_github
 cat ~/.ssh/pvtr_github.pub
 ```
 
-Add the public key under **FutureLithics/laravel-pvtr → Settings → Deploy keys**. Leave write access disabled.
+Add the public key under **BYU-TRG-Team/pvtr-info → Settings → Deploy keys**. Leave write access disabled.
 
 Add to the server's `~/.ssh/config`:
 
@@ -82,7 +82,7 @@ Test and clone:
 
 ```bash
 ssh -T git@github-pvtr
-git clone git@github-pvtr:FutureLithics/laravel-pvtr.git
+git clone git@github-pvtr:BYU-TRG-Team/pvtr-info.git
 ```
 
 ## First server setup
@@ -90,7 +90,7 @@ git clone git@github-pvtr:FutureLithics/laravel-pvtr.git
 Point the site's document root to the repository's `public/` directory.
 
 ```bash
-cd /path/to/laravel-pvtr
+cd /path/to/pvtr-info
 cp .env.example .env
 touch database/database.sqlite
 composer install --no-dev --optimize-autoloader
@@ -109,7 +109,7 @@ php artisan optimize
 
 ```bash
 ssh pvtr-bluehost
-cd /path/to/laravel-pvtr
+cd /path/to/pvtr-info
 cp database/database.sqlite database/database.sqlite.$(date +%Y%m%d%H%M%S).bak
 php artisan down
 git pull --ff-only origin main
