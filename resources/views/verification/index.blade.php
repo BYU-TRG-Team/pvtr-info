@@ -31,6 +31,18 @@
                 <button type="submit" class="rounded-md bg-slate-950 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-800">
                     Look up license
                 </button>
+
+                @if ($result !== null)
+                    @if ($found)
+                        <p class="text-sm font-medium text-emerald-700">
+                            License Found, see details in Lookup result panel
+                        </p>
+                    @else
+                        <p class="text-sm font-medium text-orange-600">
+                            No license found.
+                        </p>
+                    @endif
+                @endif
             </form>
         </section>
 

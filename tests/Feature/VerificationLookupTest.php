@@ -27,6 +27,7 @@ class VerificationLookupTest extends TestCase
             'license_number' => '100-001',
         ])
             ->assertOk()
+            ->assertSee('License Found, see details in Lookup result Panel')
             ->assertSee('License is valid.')
             ->assertSee('Example Person')
             ->assertSee('person@example.com')
@@ -74,6 +75,7 @@ class VerificationLookupTest extends TestCase
             'license_number' => '999-999',
         ])
             ->assertOk()
+            ->assertSee('No license found.')
             ->assertSee('No valid matching license was found.')
             ->assertDontSee('Example Person');
     }
@@ -104,11 +106,15 @@ class VerificationLookupTest extends TestCase
 
         $this->post(route('verification.verify'), [
             'license_number' => '100-001',
-        ])->assertSee('No valid matching license was found.');
+        ])
+            ->assertSee('No license found.')
+            ->assertSee('No valid matching license was found.');
 
         $this->post(route('verification.verify'), [
             'license_number' => '100-002',
-        ])->assertSee('No valid matching license was found.');
+        ])
+            ->assertSee('License Found, see details in Lookup result panel')
+            ->assertSee('No valid matching license was found.');
     }
 
     public function test_get_verify_route_displays_the_form_for_safe_refreshes(): void

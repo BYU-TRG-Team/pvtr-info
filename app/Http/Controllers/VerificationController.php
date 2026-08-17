@@ -12,6 +12,7 @@ class VerificationController extends Controller
     {
         return view('verification.index', [
             'result' => null,
+            'found' => null,
             'license' => null,
         ]);
     }
@@ -29,6 +30,7 @@ class VerificationController extends Controller
 
         return view('verification.index', [
             'result' => $isValid ? 'valid' : 'invalid',
+            'found' => $license !== null,
             'license' => $isValid ? $license : null,
         ]);
     }
