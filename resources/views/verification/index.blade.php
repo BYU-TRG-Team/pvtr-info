@@ -34,11 +34,11 @@
 
                 @if ($result !== null)
                     @if ($found)
-                        <p class="text-sm font-medium text-emerald-700">
-                            License Found, see details in Lookup result panel
+                        <p class="text-sm font-medium text-emerald-800">
+                            License Found, see details in Lookup result Panel
                         </p>
                     @else
-                        <p class="text-sm font-medium text-orange-600">
+                        <p class="text-sm font-medium text-red-600">
                             No license found.
                         </p>
                     @endif

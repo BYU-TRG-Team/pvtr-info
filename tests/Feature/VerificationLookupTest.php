@@ -113,7 +113,7 @@ class VerificationLookupTest extends TestCase
         $this->post(route('verification.verify'), [
             'license_number' => '100-002',
         ])
-            ->assertSee('License Found, see details in Lookup result panel')
+            ->assertSee('License Found, see details in Lookup result Panel')
             ->assertSee('No valid matching license was found.');
     }
 
