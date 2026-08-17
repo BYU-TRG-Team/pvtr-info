@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $title ?? config('app.name', 'PVTR License Verification') }}</title>
+        <title>{{ $title ?? config('app.name', 'PVTR License Lookup') }}</title>
 
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -13,11 +13,11 @@
         <header class="border-b border-slate-200 bg-white">
             <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
                 <a href="{{ route('verification.index') }}" class="text-lg font-semibold tracking-tight">
-                    PVTR License Verification
+                    PVTR License Lookup
                 </a>
 
                 <nav class="flex items-center gap-4 text-sm">
-                    <a href="{{ route('verification.index') }}" class="text-slate-600 hover:text-slate-950">Verify</a>
+                    <a href="{{ route('verification.index') }}" class="text-slate-600 hover:text-slate-950">Look up</a>
                     @auth
                         <a href="{{ route('admin.imports.index') }}" class="text-slate-600 hover:text-slate-950">Imports</a>
                         <a href="{{ route('admin.users.index') }}" class="text-slate-600 hover:text-slate-950">Users</a>

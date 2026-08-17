@@ -32,7 +32,7 @@ class VerificationLookupTest extends TestCase
             ->assertSee('person@example.com')
             ->assertSee('There are two types of entity: an individual and a corporation/organization.')
             ->assertSee('The email address associated with this license record.')
-            ->assertSee('The current license status. Only an Active status can verify as valid.')
+            ->assertSee('The current license status. Only an Active status is considered valid when checked.')
             ->assertDontSee('Expiration');
     }
 

@@ -1,6 +1,6 @@
-# PVTR License Verification
+# PVTR License Lookup
 
-Laravel application for public license verification and license-data administration.
+Laravel application for public license lookup and license-data administration.
 
 ## Local development
 
@@ -22,7 +22,7 @@ Run tests with `composer test`.
 
 ## Application usage
 
-- `/` — search for and verify a license.
+- `/` — look up and check a license.
 - `/login` — sign in to the admin area.
 - `/admin` — upload license data and view import history.
 - `/admin/users` — create admin users or change your own password.
