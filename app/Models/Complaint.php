@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ComplaintStatus;
 use App\Enums\ComplaintType;
+use App\Enums\LicenseStatusAtFiling;
 use Database\Factories\ComplaintFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -54,6 +55,7 @@ class Complaint extends Model
     protected function casts(): array
     {
         return [
+            'license_status_at_filing' => LicenseStatusAtFiling::class,
             'complaint_type' => ComplaintType::class,
             'status' => ComplaintStatus::class,
             'details' => 'array',
