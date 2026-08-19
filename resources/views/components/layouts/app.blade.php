@@ -18,6 +18,7 @@
 
                 <nav class="flex items-center gap-4 text-sm">
                     <a href="{{ route('verification.index') }}" class="text-slate-600 hover:text-slate-950">Look up</a>
+                    <a href="{{ route('complaints.create') }}" class="text-slate-600 hover:text-slate-950">File a complaint</a>
                     @auth
                         <a href="{{ route('admin.imports.index') }}" class="text-slate-600 hover:text-slate-950">Imports</a>
                         <a href="{{ route('admin.users.index') }}" class="text-slate-600 hover:text-slate-950">Users</a>
