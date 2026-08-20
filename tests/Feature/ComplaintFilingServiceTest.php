@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ComplaintStatus;
 use App\Enums\ComplaintType;
 use App\Enums\LicenseStatusAtFiling;
 use App\Models\LicenseRecord;
@@ -24,9 +23,9 @@ class ComplaintFilingServiceTest extends TestCase
         ]);
         $service = app(ComplaintFilingService::class);
 
-        $validComplaint = $service->file($this->complaintData('CMP-2026-0001', '100001'));
-        $invalidComplaint = $service->file($this->complaintData('CMP-2026-0002', '100-002'));
-        $unknownComplaint = $service->file($this->complaintData('CMP-2026-0003', '999-999'));
+        $validComplaint = $service->file($this->complaintData('100001'));
+        $invalidComplaint = $service->file($this->complaintData('100-002'));
+        $unknownComplaint = $service->file($this->complaintData('999-999'));
 
         $this->assertSame(LicenseStatusAtFiling::Valid, $validComplaint->license_status_at_filing);
         $this->assertTrue($validComplaint->licenseRecord->is($valid));
@@ -36,21 +35,33 @@ class ComplaintFilingServiceTest extends TestCase
         $this->assertNull($unknownComplaint->licenseRecord);
     }
 
+    public function test_it_creates_the_complaint_and_initial_message_in_one_filing_operation(): void
+    {
+        $complaint = app(ComplaintFilingService::class)->file(
+            $this->complaintData('100-001'),
+        );
+
+        $this->assertMatchesRegularExpression('/^CMP-\d{4}-\d{4}$/', $complaint->public_reference);
+        $this->assertGreaterThanOrEqual(32, strlen($complaint->secret_link_key));
+        $this->assertNotNull($complaint->filed_at);
+        $this->assertCount(1, $complaint->messages);
+        $this->assertSame(
+            'The logo attached to this translation appears to be invalid.',
+            $complaint->messages->first()->body,
+        );
+    }
+
     /**
      * @return array<string, mixed>
      */
-    private function complaintData(string $reference, string $licenseNumber): array
+    private function complaintData(string $licenseNumber): array
     {
         return [
-            'public_reference' => $reference,
-            'secret_link_key' => hash('sha256', $reference),
             'complainant_name' => 'Example Reporter',
             'complainant_email' => 'reporter@example.com',
             'license_number' => $licenseNumber,
-            'complaint_type' => ComplaintType::InvalidLogo,
-            'status' => ComplaintStatus::UnderReview,
-            'details' => [],
-            'filed_at' => now(),
+            'complaint_type' => ComplaintType::InvalidLogo->value,
+            'statement' => 'The logo attached to this translation appears to be invalid.',
         ];
     }
 }

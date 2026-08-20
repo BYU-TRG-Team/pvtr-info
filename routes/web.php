@@ -11,6 +11,8 @@ Route::get('/', [VerificationController::class, 'index'])->name('verification.in
 Route::get('/verify', [VerificationController::class, 'index'])->name('verification.show');
 Route::post('/verify', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/complaints/new', [ComplaintController::class, 'create'])->name('complaints.create');
+Route::post('/complaints', [ComplaintController::class, 'store'])->name('complaints.store');
+Route::get('/complaints/submitted', [ComplaintController::class, 'submitted'])->name('complaints.submitted');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
