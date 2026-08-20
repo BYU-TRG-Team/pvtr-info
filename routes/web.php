@@ -13,6 +13,12 @@ Route::post('/verify', [VerificationController::class, 'verify'])->name('verific
 Route::get('/complaints/new', [ComplaintController::class, 'create'])->name('complaints.create');
 Route::post('/complaints', [ComplaintController::class, 'store'])->name('complaints.store');
 Route::get('/complaints/submitted', [ComplaintController::class, 'submitted'])->name('complaints.submitted');
+Route::get('/complaints/{secretLinkKey}', [ComplaintController::class, 'show'])
+    ->where('secretLinkKey', '[A-Za-z0-9]{64}')
+    ->name('complaints.show');
+Route::post('/complaints/{secretLinkKey}/replies', [ComplaintController::class, 'storeReply'])
+    ->where('secretLinkKey', '[A-Za-z0-9]{64}')
+    ->name('complaints.replies.store');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

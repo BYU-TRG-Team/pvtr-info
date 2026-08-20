@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ComplaintMessageAuthorType;
 use App\Enums\ComplaintType;
+use App\Http\Requests\StoreComplaintReplyRequest;
 use App\Http\Requests\StoreComplaintRequest;
 use App\Models\Complaint;
 use App\Services\ComplaintFilingService;
@@ -51,5 +53,40 @@ class ComplaintController extends Controller
             'complaint' => $complaint,
             'secretLink' => url('/complaints/'.$complaint->secret_link_key),
         ]);
+    }
+
+    public function show(string $secretLinkKey): View
+    {
+        $complaint = Complaint::query()
+            ->where('secret_link_key', $secretLinkKey)
+            ->with([
+                'messages' => fn ($query) => $query
+                    ->orderBy('created_at')
+                    ->orderBy('id'),
+            ])
+            ->firstOrFail();
+
+        return view('complaints.show', [
+            'complaint' => $complaint,
+        ]);
+    }
+
+    public function storeReply(
+        StoreComplaintReplyRequest $request,
+        string $secretLinkKey,
+    ): RedirectResponse {
+        $complaint = Complaint::query()
+            ->where('secret_link_key', $secretLinkKey)
+            ->firstOrFail();
+
+        $complaint->messages()->create([
+            'user_id' => null,
+            'author_type' => ComplaintMessageAuthorType::Complainant,
+            'body' => $request->validated('body'),
+        ]);
+
+        return redirect()
+            ->route('complaints.show', ['secretLinkKey' => $secretLinkKey])
+            ->with('status', 'Reply added.');
     }
 }
