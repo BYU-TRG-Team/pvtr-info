@@ -18,8 +18,10 @@
 
                 <nav class="flex items-center gap-4 text-sm">
                     <a href="{{ route('verification.index') }}" class="text-slate-600 hover:text-slate-950">Look up</a>
+                    <a href="{{ route('complaints.create') }}" class="text-slate-600 hover:text-slate-950">File a complaint</a>
                     @auth
                         <a href="{{ route('admin.imports.index') }}" class="text-slate-600 hover:text-slate-950">Imports</a>
+                        <a href="{{ route('admin.complaints.index') }}" class="text-slate-600 hover:text-slate-950">Complaints</a>
                         <a href="{{ route('admin.users.index') }}" class="text-slate-600 hover:text-slate-950">Users</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -36,6 +38,11 @@
             @if (session('status'))
                 <div class="mb-6 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
                     {{ session('status') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+                    {{ session('error') }}
                 </div>
             @endif
 
