@@ -21,6 +21,7 @@
                     <a href="{{ route('complaints.create') }}" class="text-slate-600 hover:text-slate-950">File a complaint</a>
                     @auth
                         <a href="{{ route('admin.imports.index') }}" class="text-slate-600 hover:text-slate-950">Imports</a>
+                        <a href="{{ route('admin.complaints.index') }}" class="text-slate-600 hover:text-slate-950">Complaints</a>
                         <a href="{{ route('admin.users.index') }}" class="text-slate-600 hover:text-slate-950">Users</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

@@ -105,6 +105,40 @@ class ComplaintSecretLinkTest extends TestCase
             ->assertSee('Here is the additional information you requested.');
     }
 
+    public function test_archived_complaint_thread_remains_viewable_but_read_only(): void
+    {
+        $complaint = Complaint::factory()
+            ->has(ComplaintMessage::factory()->complainant()->state([
+                'body' => 'Archived complaint statement.',
+            ]), 'messages')
+            ->create([
+                'public_reference' => 'CMP-2026-ARCHIVED',
+                'secret_link_key' => str_repeat('a', 64),
+            ]);
+        $complaint->delete();
+
+        $this->get(route('complaints.show', [
+            'secretLinkKey' => $complaint->secret_link_key,
+        ]))
+            ->assertOk()
+            ->assertSee('CMP-2026-ARCHIVED')
+            ->assertSee('Archived complaint statement.')
+            ->assertSee('This complaint has been archived')
+            ->assertDontSee('Add follow-up information')
+            ->assertDontSee('Send reply');
+
+        $this->post(route('complaints.replies.store', [
+            'secretLinkKey' => $complaint->secret_link_key,
+        ]), [
+            'body' => 'A reply that must not be saved.',
+        ])->assertNotFound();
+
+        $this->assertDatabaseMissing('complaint_messages', [
+            'complaint_id' => $complaint->id,
+            'body' => 'A reply that must not be saved.',
+        ]);
+    }
+
     public function test_secret_links_isolate_complaint_threads_and_replies(): void
     {
         $complaintA = Complaint::factory()

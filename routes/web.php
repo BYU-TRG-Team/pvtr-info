@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminComplaintController;
 use App\Http\Controllers\AdminImportController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AuthController;
@@ -38,4 +39,11 @@ Route::middleware('auth')
         Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
         Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
         Route::put('/users/password', [AdminUserController::class, 'updatePassword'])->name('users.password.update');
+        Route::get('/complaints', [AdminComplaintController::class, 'index'])->name('complaints.index');
+        Route::get('/complaints/{complaint}', [AdminComplaintController::class, 'show'])->name('complaints.show');
+        Route::put('/complaints/{complaint}', [AdminComplaintController::class, 'update'])->name('complaints.update');
+        Route::delete('/complaints/{complaint}', [AdminComplaintController::class, 'destroy'])->name('complaints.destroy');
+        Route::post('/complaints/{complaint}/restore', [AdminComplaintController::class, 'restore'])->name('complaints.restore');
+        Route::put('/complaints/{complaint}/status', [AdminComplaintController::class, 'updateStatus'])->name('complaints.status.update');
+        Route::post('/complaints/{complaint}/replies', [AdminComplaintController::class, 'storeReply'])->name('complaints.replies.store');
     });

@@ -57,7 +57,7 @@ class ComplaintController extends Controller
 
     public function show(string $secretLinkKey): View
     {
-        $complaint = Complaint::query()
+        $complaint = Complaint::withTrashed()
             ->where('secret_link_key', $secretLinkKey)
             ->with([
                 'messages' => fn ($query) => $query

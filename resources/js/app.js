@@ -23,6 +23,30 @@ document.querySelectorAll('[data-complaint-form]').forEach((form) => {
     syncPoorQualityFields();
 });
 
+document.querySelectorAll('[data-complaint-edit]').forEach((container) => {
+    const form = container.querySelector('[data-complaint-edit-form]');
+    const toggles = container.querySelectorAll('[data-edit-toggle]');
+
+    if (!form || toggles.length === 0) {
+        return;
+    }
+
+    const setEditing = (editing) => {
+        container.dataset.editing = editing ? 'true' : 'false';
+        form.hidden = !editing;
+
+        toggles.forEach((toggle) => {
+            toggle.textContent = editing ? 'Cancel editing' : 'Correct classification';
+        });
+    };
+
+    toggles.forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+            setEditing(container.dataset.editing !== 'true');
+        });
+    });
+});
+
 const copyText = async (value) => {
     if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(value);

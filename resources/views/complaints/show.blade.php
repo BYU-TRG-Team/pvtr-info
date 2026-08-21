@@ -7,6 +7,13 @@
                 Review the complaint details and messages associated with this private link.
             </p>
 
+            @if ($complaint->trashed())
+                <div class="mt-5 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                    <p class="font-medium">This complaint has been archived.</p>
+                    <p class="mt-1">Its details and message history remain available, but no further replies can be added.</p>
+                </div>
+            @endif
+
             <dl class="mt-6 grid gap-4 text-sm sm:grid-cols-2">
                 <div>
                     <dt class="font-medium text-slate-700">Relevant logo ID</dt>
@@ -69,29 +76,31 @@
                 @endforeach
             </div>
 
-            <form
-                method="POST"
-                action="{{ route('complaints.replies.store', ['secretLinkKey' => $complaint->secret_link_key]) }}"
-                class="mt-6 border-t border-slate-200 pt-6"
-            >
-                @csrf
+            @unless ($complaint->trashed())
+                <form
+                    method="POST"
+                    action="{{ route('complaints.replies.store', ['secretLinkKey' => $complaint->secret_link_key]) }}"
+                    class="mt-6 border-t border-slate-200 pt-6"
+                >
+                    @csrf
 
-                <label for="body" class="block text-sm font-medium text-slate-700">Add follow-up information</label>
-                <textarea
-                    id="body"
-                    name="body"
-                    rows="5"
-                    required
-                    class="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-slate-900 focus:outline-none"
-                >{{ old('body') }}</textarea>
-                @error('body')
-                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+                    <label for="body" class="block text-sm font-medium text-slate-700">Add follow-up information</label>
+                    <textarea
+                        id="body"
+                        name="body"
+                        rows="5"
+                        required
+                        class="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-slate-900 focus:outline-none"
+                    >{{ old('body') }}</textarea>
+                    @error('body')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
 
-                <button type="submit" class="mt-4 rounded-md bg-slate-950 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-800">
-                    Send reply
-                </button>
-            </form>
+                    <button type="submit" class="mt-4 rounded-md bg-slate-950 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-800">
+                        Send reply
+                    </button>
+                </form>
+            @endunless
         </section>
     </div>
 </x-layouts.app>

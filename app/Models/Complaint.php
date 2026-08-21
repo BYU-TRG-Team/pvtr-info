@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
     'license_record_id',
@@ -29,7 +30,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Complaint extends Model
 {
     /** @use HasFactory<ComplaintFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * @return BelongsTo<LicenseRecord, $this>
