@@ -14,6 +14,24 @@
                 </p>
             </div>
 
+            <aside class="mt-6 rounded-md border border-slate-200 bg-slate-50 p-5">
+                <h2 class="font-semibold text-slate-900">Which type of complaint should I choose?</h2>
+                <div class="mt-4 grid gap-4 text-sm sm:grid-cols-2">
+                    <div>
+                        <h3 class="font-medium text-slate-900">Invalid logo attached to a translation</h3>
+                        <p class="mt-1 text-slate-600">
+                            Choose this when a PVTR logo appears on a translation but the displayed logo ID is not valid.
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-slate-900">Valid logo, poor-quality translation</h3>
+                        <p class="mt-1 text-slate-600">
+                            Choose this when the logo is valid, but the translation contains a major error or appears to be unverified automatic translation.
+                        </p>
+                    </div>
+                </div>
+            </aside>
+
             @php($showPoorQualityFields = old('complaint_type') === $poorQualityType)
 
             <form method="POST" action="{{ route('complaints.store') }}" class="mt-6 space-y-6" data-complaint-form>
@@ -67,7 +85,11 @@
                     </div>
 
                     <div>
-                        <label for="license_number" class="block text-sm font-medium text-slate-700">Relevant logo ID</label>
+                        <label for="license_number" class="block text-sm font-medium text-slate-700">
+                            <x-tooltip-label text="Enter the number displayed with the PVTR logo. Dashes are optional.">
+                                Relevant logo ID
+                            </x-tooltip-label>
+                        </label>
                         <input
                             id="license_number"
                             name="license_number"
@@ -84,7 +106,11 @@
                 </div>
 
                 <div>
-                    <label for="complaint_type" class="block text-sm font-medium text-slate-700">Complaint type</label>
+                    <label for="complaint_type" class="block text-sm font-medium text-slate-700">
+                        <x-tooltip-label text="Choose the scenario that best matches what you are reporting.">
+                            Complaint type
+                        </x-tooltip-label>
+                    </label>
                     <select
                         id="complaint_type"
                         name="complaint_type"
@@ -115,7 +141,9 @@
 
                     <div>
                         <label for="translation_location" class="block text-sm font-medium text-slate-700">
-                            Where to find the translation
+                            <x-tooltip-label text="Provide a URL, document name, product, or other location that lets reviewers find the translation.">
+                                Where to find the translation
+                            </x-tooltip-label>
                         </label>
                         <input
                             id="translation_location"
@@ -151,7 +179,11 @@
                     </div>
 
                     <div>
-                        <label for="harm_type" class="block text-sm font-medium text-slate-700">Potential harm</label>
+                        <label for="harm_type" class="block text-sm font-medium text-slate-700">
+                            <x-tooltip-label text="Choose the most likely consequence of the translation problem.">
+                                Potential harm
+                            </x-tooltip-label>
+                        </label>
                         <select
                             id="harm_type"
                             name="harm_type"

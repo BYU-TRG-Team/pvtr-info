@@ -127,16 +127,31 @@ class ComplaintSecretLinkTest extends TestCase
             ->assertDontSee('Add follow-up information')
             ->assertDontSee('Send reply');
 
-        $this->post(route('complaints.replies.store', [
+        $this->from(route('complaints.show', [
+            'secretLinkKey' => $complaint->secret_link_key,
+        ]))->post(route('complaints.replies.store', [
             'secretLinkKey' => $complaint->secret_link_key,
         ]), [
             'body' => 'A reply that must not be saved.',
-        ])->assertNotFound();
+        ])
+            ->assertRedirect(route('complaints.show', [
+                'secretLinkKey' => $complaint->secret_link_key,
+            ]))
+            ->assertSessionHas(
+                'error',
+                'This complaint has been archived and can no longer accept replies.',
+            );
 
         $this->assertDatabaseMissing('complaint_messages', [
             'complaint_id' => $complaint->id,
             'body' => 'A reply that must not be saved.',
         ]);
+
+        $this->get(route('complaints.show', [
+            'secretLinkKey' => $complaint->secret_link_key,
+        ]))
+            ->assertOk()
+            ->assertSee('This complaint has been archived and can no longer accept replies.');
     }
 
     public function test_secret_links_isolate_complaint_threads_and_replies(): void

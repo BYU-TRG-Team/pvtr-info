@@ -2,7 +2,10 @@
     'text',
 ])
 
-<span {{ $attributes->merge(['class' => 'group relative inline-flex cursor-help border-b border-dotted border-current']) }}>
+<span
+    tabindex="0"
+    {{ $attributes->merge(['class' => 'group relative inline-flex cursor-help border-b border-dotted border-current outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2']) }}
+>
     {{ $slot }}
     <span
         role="tooltip"

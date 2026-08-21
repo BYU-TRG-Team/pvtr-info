@@ -43,6 +43,28 @@ class ComplaintFilingTest extends TestCase
             ->assertSee('https://example.com/translation');
     }
 
+    public function test_complaint_form_explains_both_reporting_scenarios(): void
+    {
+        $this->get(route('complaints.create'))
+            ->assertOk()
+            ->assertSee('Which type of complaint should I choose?')
+            ->assertSee('Invalid logo attached to a translation')
+            ->assertSee('Valid logo, poor-quality translation')
+            ->assertSee('unverified automatic translation');
+    }
+
+    public function test_complaint_form_has_help_for_complex_fields(): void
+    {
+        $this->get(route('complaints.create'))
+            ->assertOk()
+            ->assertSee('Dashes are optional')
+            ->assertSee('Choose the scenario that best matches')
+            ->assertSee('Provide a URL, document name, product')
+            ->assertSee('Choose the most likely consequence')
+            ->assertSee('tabindex="0"', false)
+            ->assertSee('role="tooltip"', false);
+    }
+
     public function test_complaint_link_is_visible_to_guests_and_admins(): void
     {
         $complaintUrl = route('complaints.create');

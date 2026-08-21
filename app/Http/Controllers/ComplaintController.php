@@ -75,9 +75,18 @@ class ComplaintController extends Controller
         StoreComplaintReplyRequest $request,
         string $secretLinkKey,
     ): RedirectResponse {
-        $complaint = Complaint::query()
+        $complaint = Complaint::withTrashed()
             ->where('secret_link_key', $secretLinkKey)
             ->firstOrFail();
+
+        if ($complaint->trashed()) {
+            return redirect()
+                ->route('complaints.show', ['secretLinkKey' => $secretLinkKey])
+                ->with(
+                    'error',
+                    'This complaint has been archived and can no longer accept replies.',
+                );
+        }
 
         $complaint->messages()->create([
             'user_id' => null,
