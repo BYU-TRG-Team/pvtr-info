@@ -10,7 +10,7 @@ class ComplaintReferenceGenerator
     {
         $prefix = 'CMP-'.now()->format('Y').'-';
 
-        $latestReference = Complaint::query()
+        $latestReference = Complaint::withTrashed()
             ->where('public_reference', 'like', $prefix.'%')
             ->orderByDesc('public_reference')
             ->value('public_reference');
