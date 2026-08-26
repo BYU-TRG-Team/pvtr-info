@@ -23,4 +23,17 @@ class ComplaintReferenceGeneratorTest extends TestCase
 
         $this->assertSame('CMP-2026-0002', $reference);
     }
+
+    public function test_it_does_not_reuse_an_archived_complaint_reference(): void
+    {
+        $this->travelTo(Carbon::parse('2026-08-26 10:00:00'));
+        $complaint = Complaint::factory()->create([
+            'public_reference' => 'CMP-2026-0001',
+        ]);
+        $complaint->delete();
+
+        $reference = app(ComplaintReferenceGenerator::class)->generate();
+
+        $this->assertSame('CMP-2026-0002', $reference);
+    }
 }
