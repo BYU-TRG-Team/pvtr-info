@@ -11,10 +11,7 @@ document.querySelectorAll('[data-complaint-form]').forEach((form) => {
     const syncPoorQualityFields = () => {
         const isPoorQuality = typeSelect.value === typeSelect.dataset.poorQualityValue;
 
-        poorQualityFields.hidden = !isPoorQuality;
-
         requiredFields.forEach((field) => {
-            field.disabled = !isPoorQuality;
             field.required = isPoorQuality;
         });
     };

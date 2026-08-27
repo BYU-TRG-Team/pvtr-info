@@ -26,21 +26,19 @@ class ComplaintFilingTest extends TestCase
             ->assertSee('name="statement"', false)
             ->assertSee('name="translation_location"', false)
             ->assertSee('name="major_error"', false)
-            ->assertSee('name="harm_type"', false)
-            ->assertSee('data-initially-visible="false"', false);
+            ->assertSee('name="harm_type"', false);
     }
 
-    public function test_poor_quality_fields_are_initially_visible_when_old_input_selects_that_type(): void
+    public function test_all_complaint_fields_are_visible_and_enabled_on_initial_load(): void
     {
-        $this->withSession([
-            '_old_input' => [
-                'complaint_type' => ComplaintType::PoorQualityTranslation->value,
-                'translation_location' => 'https://example.com/translation',
-            ],
-        ])->get(route('complaints.create'))
-            ->assertOk()
-            ->assertSee('data-initially-visible="true"', false)
-            ->assertSee('https://example.com/translation');
+        $response = $this->get(route('complaints.create'))->assertOk();
+        $html = $response->getContent();
+
+        $this->assertDoesNotMatchRegularExpression(
+            '/<fieldset[^>]*data-poor-quality-fields[^>]*hidden/s',
+            $html,
+        );
+        $this->assertStringNotContainsString(' disabled', $html);
     }
 
     public function test_complaint_form_explains_both_reporting_scenarios(): void

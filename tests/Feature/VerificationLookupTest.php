@@ -28,7 +28,8 @@ class VerificationLookupTest extends TestCase
         ])
             ->assertOk()
             ->assertSee('License Found, see details in Lookup result Panel')
-            ->assertSee('License is valid.')
+            ->assertSee('value="100-001"', false)
+            ->assertSee('License #100-001 is valid.')
             ->assertSee('Example Person')
             ->assertSee('person@example.com')
             ->assertSee('There are two types of entity: an individual and a corporation/organization.')
@@ -54,7 +55,8 @@ class VerificationLookupTest extends TestCase
             'license_number' => '100001',
         ])
             ->assertOk()
-            ->assertSee('License is valid.')
+            ->assertSee('value="100001"', false)
+            ->assertSee('License #100-001 is valid.')
             ->assertSee('Example Person');
     }
 

@@ -13,12 +13,12 @@
                 @csrf
 
                 <div>
-                    <label for="license_number" class="block text-sm font-medium text-slate-700">License #</label>
+                    <label for="license_number" class="block text-sm font-medium text-slate-700 mr-2">License # </label>
                     <input
                         id="license_number"
                         name="license_number"
                         type="text"
-                        value="{{ old('license_number') }}"
+                        value="{{ old('license_number', $searchedLicenseNumber) }}"
                         placeholder="###### or ###-###"
                         required
                         class="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-slate-900 focus:outline-none"
@@ -51,7 +51,10 @@
 
             @if ($result === 'valid' && $license)
                 <div class="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4">
-                    <p class="font-medium text-emerald-900">License is valid.</p>
+                    <p class="font-medium">License
+                        <span class="text-emerald-900 font-bold">#{{ $license->license_number }}</span>
+                        is valid.
+                    </p>
                     <dl class="mt-4 space-y-3 text-sm text-emerald-900">
                         <div>
                             <dt class="font-medium">
