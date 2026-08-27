@@ -14,6 +14,7 @@ class VerificationController extends Controller
             'result' => null,
             'found' => null,
             'license' => null,
+            'searchedLicenseNumber' => null,
         ]);
     }
 
@@ -32,6 +33,7 @@ class VerificationController extends Controller
             'result' => $isValid ? 'valid' : 'invalid',
             'found' => $license !== null,
             'license' => $isValid ? $license : null,
+            'searchedLicenseNumber' => $request->validated('license_number'),
         ]);
     }
 }

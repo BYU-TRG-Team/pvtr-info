@@ -32,8 +32,6 @@
                 </div>
             </aside>
 
-            @php($showPoorQualityFields = old('complaint_type') === $poorQualityType)
-
             <form method="POST" action="{{ route('complaints.store') }}" class="mt-6 space-y-6" data-complaint-form>
                 @csrf
 
@@ -134,10 +132,11 @@
                 <fieldset
                     class="space-y-5 rounded-md border border-slate-200 bg-slate-50 p-5"
                     data-poor-quality-fields
-                    data-initially-visible="{{ $showPoorQualityFields ? 'true' : 'false' }}"
-                    @if (! $showPoorQualityFields) hidden @endif
                 >
-                    <legend class="px-1 text-sm font-medium text-slate-700">Poor-quality translation details</legend>
+                    <legend class="px-1 text-sm font-medium text-slate-700">
+                        Poor-quality translation details
+                        <span class="font-normal text-slate-500">(required for poor-quality complaints)</span>
+                    </legend>
 
                     <div>
                         <label for="translation_location" class="block text-sm font-medium text-slate-700">
@@ -151,8 +150,6 @@
                             type="text"
                             value="{{ old('translation_location') }}"
                             data-required-for-poor-quality
-                            @required($showPoorQualityFields)
-                            @disabled(! $showPoorQualityFields)
                             class="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-slate-900 focus:outline-none"
                         >
                         @error('translation_location')
@@ -169,8 +166,6 @@
                             name="major_error"
                             rows="4"
                             data-required-for-poor-quality
-                            @required($showPoorQualityFields)
-                            @disabled(! $showPoorQualityFields)
                             class="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-slate-900 focus:outline-none"
                         >{{ old('major_error') }}</textarea>
                         @error('major_error')
@@ -188,8 +183,6 @@
                             id="harm_type"
                             name="harm_type"
                             data-required-for-poor-quality
-                            @required($showPoorQualityFields)
-                            @disabled(! $showPoorQualityFields)
                             class="mt-2 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 shadow-sm focus:border-slate-900 focus:outline-none"
                         >
                             <option value="">Select a type of harm</option>
