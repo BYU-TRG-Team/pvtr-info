@@ -51,7 +51,8 @@
 
             @if ($result === 'valid' && $license)
                 <div class="mt-4 rounded-md border border-emerald-200 bg-emerald-50 p-4">
-                    <p class="font-medium">License
+                    <p class="font-medium">
+                        License
                         <span class="text-emerald-900 font-bold">#{{ $license->license_number }}</span>
                         is valid.
                     </p>
