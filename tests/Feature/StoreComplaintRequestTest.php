@@ -4,11 +4,14 @@ namespace Tests\Feature;
 
 use App\Enums\ComplaintType;
 use App\Http\Requests\StoreComplaintRequest;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
 class StoreComplaintRequestTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_it_requires_the_base_complaint_fields(): void
     {
         foreach ([
@@ -37,7 +40,7 @@ class StoreComplaintRequestTest extends TestCase
         $this->assertFalse($validator->fails());
     }
 
-    public function test_invalid_logo_complaint_requires_only_the_base_statement_fields(): void
+    public function test_invalid_logo_complaint_requires_translation_location_but_not_poor_quality_fields(): void
     {
         $data = $this->validData();
         unset(
@@ -45,6 +48,14 @@ class StoreComplaintRequestTest extends TestCase
             $data['major_error'],
             $data['harm_type'],
         );
+
+        $validator = Validator::make($data, (new StoreComplaintRequest)->rules());
+
+        $this->assertTrue($validator->errors()->has('translation_location'));
+        $this->assertFalse($validator->errors()->has('major_error'));
+        $this->assertFalse($validator->errors()->has('harm_type'));
+
+        $data['translation_location'] = 'https://example.com/invalid-logo';
 
         $validator = Validator::make($data, (new StoreComplaintRequest)->rules());
 
@@ -107,6 +118,7 @@ class StoreComplaintRequestTest extends TestCase
             'complainant_phone' => '555-0100',
             'license_number' => '100-001',
             'complaint_type' => ComplaintType::InvalidLogo->value,
+            'translation_location' => 'https://example.com/logo-usage',
             'statement' => 'The logo attached to this translation appears to be invalid.',
         ];
     }

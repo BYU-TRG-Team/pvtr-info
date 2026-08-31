@@ -61,6 +61,7 @@ class ComplaintFilingService
             'translation_location' => $attributes['translation_location'] ?? null,
             'major_error' => $attributes['major_error'] ?? null,
             'harm_type' => $attributes['harm_type'] ?? null,
+            'valid_license_explanation' => $attributes['valid_license_explanation'] ?? null,
         ], fn (mixed $value): bool => $value !== null && $value !== '');
     }
 }

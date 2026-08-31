@@ -77,11 +77,10 @@ class AdminComplaintTest extends TestCase
             'complainant_phone' => '555-0100',
             'license_number' => '100-001',
             'license_status_at_filing' => 'valid',
-            'complaint_type' => ComplaintType::PoorQualityTranslation,
+            'complaint_type' => ComplaintType::InvalidLogo,
             'details' => [
                 'translation_location' => 'https://example.com/translation',
-                'major_error' => 'The dosage unit is incorrect.',
-                'harm_type' => 'injury',
+                'valid_license_explanation' => 'The displayed logo does not belong to the licensed organization.',
             ],
         ]);
         ComplaintMessage::factory()->for($complaint)->complainant()->create([
@@ -103,7 +102,7 @@ class AdminComplaintTest extends TestCase
             ->assertSee('100-001')
             ->assertSee('Valid')
             ->assertSee('https://example.com/translation')
-            ->assertSee('The dosage unit is incorrect.')
+            ->assertSee('The displayed logo does not belong to the licensed organization.')
             ->assertSee(
                 'data-copy-value="'.url('/complaints/'.$complaint->secret_link_key).'"',
                 false,
@@ -330,6 +329,7 @@ class AdminComplaintTest extends TestCase
             'complainant_email' => 'reporter@example.com',
             'license_number' => '100-001',
             'complaint_type' => ComplaintType::InvalidLogo->value,
+            'translation_location' => 'https://example.com/public-listing',
             'statement' => 'The logo appears to be invalid.',
         ])->assertRedirect(route('complaints.submitted'));
 

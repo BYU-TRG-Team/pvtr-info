@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Enums\ComplaintType;
 use App\Models\Complaint;
+use App\Models\LicenseRecord;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -81,7 +82,10 @@ class ComplaintFilingTest extends TestCase
 
     public function test_public_user_can_submit_a_complaint_and_view_confirmation(): void
     {
-        $response = $this->post(route('complaints.store'), $this->validComplaintData());
+        $response = $this->post(route('complaints.store'), [
+            ...$this->validComplaintData(),
+            'translation_location' => 'https://example.com/logo-usage',
+        ]);
 
         $response
             ->assertRedirect(route('complaints.submitted'))
@@ -132,6 +136,56 @@ class ComplaintFilingTest extends TestCase
             'The translation has a serious quality problem.',
             $complaint->messages()->firstOrFail()->body,
         );
+    }
+
+    public function test_invalid_logo_complaint_requires_translation_location(): void
+    {
+        $this->from(route('complaints.create'))
+            ->post(route('complaints.store'), $this->validComplaintData())
+            ->assertRedirect(route('complaints.create'))
+            ->assertSessionHasErrors('translation_location');
+    }
+
+    public function test_invalid_logo_complaint_with_valid_license_requires_explanation(): void
+    {
+        LicenseRecord::factory()->create([
+            'license_number' => '100-001',
+        ]);
+
+        $this->from(route('complaints.create'))
+            ->post(route('complaints.store'), [
+                ...$this->validComplaintData(),
+                'translation_location' => 'https://example.com/logo-usage',
+            ])
+            ->assertRedirect(route('complaints.create'))
+            ->assertSessionHasErrors('valid_license_explanation');
+    }
+
+    public function test_invalid_logo_complaint_can_store_valid_license_explanation(): void
+    {
+        LicenseRecord::factory()->create([
+            'license_number' => '100-001',
+        ]);
+
+        $this->post(route('complaints.store'), [
+            ...$this->validComplaintData(),
+            'translation_location' => 'https://example.com/logo-usage',
+            'valid_license_explanation' => 'The logo graphic shown on the page does not match the licensed entity.',
+        ])->assertRedirect(route('complaints.submitted'));
+
+        $complaint = Complaint::query()->firstOrFail();
+
+        $this->assertSame([
+            'translation_location' => 'https://example.com/logo-usage',
+            'valid_license_explanation' => 'The logo graphic shown on the page does not match the licensed entity.',
+        ], $complaint->details);
+
+        $this->get(route('complaints.show', [
+            'secretLinkKey' => $complaint->secret_link_key,
+        ]))
+            ->assertOk()
+            ->assertSee('Why this was still filed as an invalid logo complaint')
+            ->assertSee('The logo graphic shown on the page does not match the licensed entity.');
     }
 
     /**

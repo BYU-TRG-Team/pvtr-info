@@ -12,6 +12,7 @@ Route::get('/', [VerificationController::class, 'index'])->name('verification.in
 Route::get('/verify', [VerificationController::class, 'index'])->name('verification.show');
 Route::post('/verify', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/complaints/new', [ComplaintController::class, 'create'])->name('complaints.create');
+Route::get('/complaints/license-status', [ComplaintController::class, 'lookupLicenseStatus'])->name('complaints.license-status');
 Route::post('/complaints', [ComplaintController::class, 'store'])->name('complaints.store');
 Route::get('/complaints/submitted', [ComplaintController::class, 'submitted'])->name('complaints.submitted');
 Route::get('/complaints/{secretLinkKey}', [ComplaintController::class, 'show'])

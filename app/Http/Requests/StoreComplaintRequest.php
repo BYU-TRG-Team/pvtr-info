@@ -3,8 +3,11 @@
 namespace App\Http\Requests;
 
 use App\Enums\ComplaintType;
+use App\Enums\LicenseStatusAtFiling;
+use App\Services\LicenseStatusAtFilingResolver;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class StoreComplaintRequest extends FormRequest
 {
@@ -26,7 +29,7 @@ class StoreComplaintRequest extends FormRequest
             'complaint_type' => ['required', Rule::enum(ComplaintType::class)],
             'statement' => ['required', 'string', 'max:10000'],
             'translation_location' => [
-                'required_if:complaint_type,'.ComplaintType::PoorQualityTranslation->value,
+                'required_if:complaint_type,'.ComplaintType::InvalidLogo->value.','.ComplaintType::PoorQualityTranslation->value,
                 'nullable',
                 'string',
                 'max:2048',
@@ -49,6 +52,35 @@ class StoreComplaintRequest extends FormRequest
                     'other',
                 ]),
             ],
+            'valid_license_explanation' => ['nullable', 'string', 'max:10000'],
         ];
+    }
+
+    /**
+     * @return array<int, \Closure(Validator): void>
+     */
+    public function after(): array
+    {
+        return [function (Validator $validator): void {
+            if (
+                $validator->errors()->hasAny(['complaint_type', 'license_number'])
+                || $this->input('complaint_type') !== ComplaintType::InvalidLogo->value
+            ) {
+                return;
+            }
+
+            $resolution = app(LicenseStatusAtFilingResolver::class)
+                ->resolve((string) $this->input('license_number'));
+
+            if (
+                $resolution->status === LicenseStatusAtFiling::Valid
+                && blank($this->input('valid_license_explanation'))
+            ) {
+                $validator->errors()->add(
+                    'valid_license_explanation',
+                    'Explain why this should still be treated as an invalid logo complaint.',
+                );
+            }
+        }];
     }
 }

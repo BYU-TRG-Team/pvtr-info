@@ -8,7 +8,11 @@ use App\Http\Requests\StoreComplaintReplyRequest;
 use App\Http\Requests\StoreComplaintRequest;
 use App\Models\Complaint;
 use App\Services\ComplaintFilingService;
+use App\Services\LicenseStatusAtFilingResolver;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class ComplaintController extends Controller
@@ -20,7 +24,34 @@ class ComplaintController extends Controller
                 ComplaintType::InvalidLogo->value => 'Invalid logo',
                 ComplaintType::PoorQualityTranslation->value => 'Poor-quality translation',
             ],
+            'invalidLogoType' => ComplaintType::InvalidLogo->value,
             'poorQualityType' => ComplaintType::PoorQualityTranslation->value,
+        ]);
+    }
+
+    public function lookupLicenseStatus(
+        Request $request,
+        LicenseStatusAtFilingResolver $licenseStatusResolver,
+    ): JsonResponse {
+        $validator = Validator::make($request->query(), [
+            'license_number' => ['required', 'string', 'max:255'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'The given data was invalid.',
+                'errors' => $validator->errors()->toArray(),
+            ], 422);
+        }
+
+        $resolution = $licenseStatusResolver->resolve(
+            $validator->validated()['license_number'],
+        );
+
+        return response()->json([
+            'license_number' => $resolution->license?->license_number
+                ?? trim((string) $validator->validated()['license_number']),
+            'license_status_at_filing' => $resolution->status->value,
         ]);
     }
 

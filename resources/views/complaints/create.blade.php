@@ -26,13 +26,20 @@
                     <div>
                         <h3 class="font-medium text-slate-900">Valid logo, poor-quality translation</h3>
                         <p class="mt-1 text-slate-600">
-                            Choose this when the logo is valid, but the translation contains a major error or appears to be unverified automatic translation.
+                            Choose this when the logo is valid, but the translation contains major or critical errors or appears to be unverified automatic translation.
                         </p>
                     </div>
                 </div>
             </aside>
 
-            <form method="POST" action="{{ route('complaints.store') }}" class="mt-6 space-y-6" data-complaint-form>
+            <form
+                method="POST"
+                action="{{ route('complaints.store') }}"
+                class="mt-6 space-y-6"
+                data-complaint-form
+                data-license-status-url="{{ route('complaints.license-status') }}"
+                data-invalid-logo-value="{{ $invalidLogoType }}"
+            >
                 @csrf
 
                 <div class="grid gap-5 sm:grid-cols-2">
@@ -131,17 +138,17 @@
 
                 <fieldset
                     class="space-y-5 rounded-md border border-slate-200 bg-slate-50 p-5"
-                    data-poor-quality-fields
+                    data-shared-location-fields
                 >
                     <legend class="px-1 text-sm font-medium text-slate-700">
-                        Poor-quality translation details
-                        <span class="font-normal text-slate-500">(required for poor-quality complaints)</span>
+                        Where to find the translation or logo use
+                        <span class="font-normal text-slate-500">(required after selecting a complaint type)</span>
                     </legend>
 
                     <div>
                         <label for="translation_location" class="block text-sm font-medium text-slate-700">
-                            <x-tooltip-label text="Provide a URL, document name, product, or other location that lets reviewers find the translation.">
-                                Where to find the translation
+                            <x-tooltip-label text="Provide a URL, document name, product, screenshot location, or other information that lets reviewers find what you are reporting.">
+                                Where to find it
                             </x-tooltip-label>
                         </label>
                         <input
@@ -156,10 +163,20 @@
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+                </fieldset>
+
+                <fieldset
+                    class="space-y-5 rounded-md border border-slate-200 bg-slate-50 p-5"
+                    data-poor-quality-fields
+                >
+                    <legend class="px-1 text-sm font-medium text-slate-700">
+                        Poor-quality translation details
+                        <span class="font-normal text-slate-500">(required for poor-quality complaints)</span>
+                    </legend>
 
                     <div>
                         <label for="major_error" class="block text-sm font-medium text-slate-700">
-                            Major error or evidence of unverified automatic translation
+                            Major or critical errors or evidence of unverified automatic translation
                         </label>
                         <textarea
                             id="major_error"
@@ -197,6 +214,42 @@
                         @enderror
                     </div>
                 </fieldset>
+
+                <section class="space-y-5 rounded-md border border-amber-200 bg-amber-50 p-5" data-invalid-logo-fields>
+                    <div>
+                        <h2 class="font-semibold text-amber-950">Invalid logo guidance</h2>
+                        <p class="mt-1 text-sm text-amber-900">
+                            We will check the relevant logo ID when you select this complaint type.
+                        </p>
+                    </div>
+
+                    <div
+                        class="rounded-md border border-amber-300 bg-white px-4 py-3 text-sm text-slate-700"
+                        data-license-status-feedback
+                        aria-live="polite"
+                    >
+                        Enter the relevant logo ID above to check whether it is currently valid.
+                    </div>
+
+                    <div data-valid-license-explanation-section>
+                        <label for="valid_license_explanation" class="block text-sm font-medium text-slate-700">
+                            Why this should still be treated as an invalid logo complaint
+                        </label>
+                        <textarea
+                            id="valid_license_explanation"
+                            name="valid_license_explanation"
+                            rows="4"
+                            data-required-for-valid-license
+                            class="mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 shadow-sm focus:border-slate-900 focus:outline-none"
+                        >{{ old('valid_license_explanation') }}</textarea>
+                        <p class="mt-2 text-sm text-slate-600">
+                            Required only when the logo ID is currently valid but the complaint is still about incorrect logo use.
+                        </p>
+                        @error('valid_license_explanation')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </section>
 
                 <div>
                     <label for="statement" class="block text-sm font-medium text-slate-700">Statement of complaint</label>
