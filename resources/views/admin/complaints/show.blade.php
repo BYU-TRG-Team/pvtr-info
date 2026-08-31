@@ -91,6 +91,12 @@
                                 <dd class="mt-1 text-slate-900">{{ str($complaint->details['harm_type'])->replace('_', ' ')->title() }}</dd>
                             </div>
                         @endif
+                        @if ($complaint->details['valid_license_explanation'] ?? null)
+                            <div class="sm:col-span-2">
+                                <dt class="font-medium text-slate-700">Why this was still filed as an invalid logo complaint</dt>
+                                <dd class="mt-1 whitespace-pre-line text-slate-900">{{ $complaint->details['valid_license_explanation'] }}</dd>
+                            </div>
+                        @endif
                     @endif
                     <div class="sm:col-span-2">
                         <dt class="font-medium text-slate-700">Statement of complaint</dt>
