@@ -135,10 +135,35 @@ cp database/database.sqlite database/database.sqlite.$(date +%Y%m%d%H%M%S).bak
 php artisan down
 git pull --ff-only origin main
 composer install --no-dev --optimize-autoloader
-php artisan migrate --force
 php artisan optimize:clear
+# Remove stale cache files that may still be loaded by PHP-FPM after a pull.
+rm -f bootstrap/cache/*.php
+php artisan migrate --force
 php artisan optimize
 php artisan up
 ```
 
 Frontend build assets are committed, so Node.js is not required on the server for a normal pull deployment.
+
+On Bluehost, use the site's configured PHP binary if `php` does not resolve to PHP 8.3:
+
+```bash
+PHP=/opt/cpanel/ea-php83/root/usr/bin/php
+$PHP artisan optimize:clear
+rm -f bootstrap/cache/*.php
+$PHP artisan migrate --force
+$PHP artisan optimize
+```
+
+### Deployment cache troubleshooting
+
+If production returns `405 Method Not Allowed` even though `artisan route:list` shows the expected route, the web process may still be using stale bootstrap route data or OPcache. From the deployed application directory, run:
+
+```bash
+PHP=/opt/cpanel/ea-php83/root/usr/bin/php
+$PHP artisan optimize:clear
+rm -f bootstrap/cache/*.php
+$PHP artisan config:cache
+```
+
+Test the affected page before caching routes again. If the error remains, restart PHP-FPM or clear OPcache in cPanel and confirm Apache is serving the same application directory in which the commands were run.
