@@ -1,4 +1,11 @@
 <x-layouts.app title="File a Complaint">
+    @php
+        $selectedComplaintType = old('complaint_type');
+        $showSharedComplaintFields = filled($selectedComplaintType);
+        $showPoorQualityFields = $selectedComplaintType === $poorQualityType;
+        $showInvalidLogoFields = $selectedComplaintType === $invalidLogoType;
+    @endphp
+
     <div class="mx-auto max-w-3xl">
         <section class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
             <p class="text-sm font-medium uppercase tracking-wide text-slate-500">Logo misuse</p>
@@ -13,24 +20,6 @@
                     Provide your contact, license, and complaint details using the fields in this form.
                 </p>
             </div>
-
-            <aside class="mt-6 rounded-md border border-slate-200 bg-slate-50 p-5">
-                <h2 class="font-semibold text-slate-900">Which type of complaint should I choose?</h2>
-                <div class="mt-4 grid gap-4 text-sm sm:grid-cols-2">
-                    <div>
-                        <h3 class="font-medium text-slate-900">Invalid logo attached to a translation</h3>
-                        <p class="mt-1 text-slate-600">
-                            Choose this when a PVTR logo appears on a translation but the displayed logo ID is not valid.
-                        </p>
-                    </div>
-                    <div>
-                        <h3 class="font-medium text-slate-900">Valid logo, poor-quality translation</h3>
-                        <p class="mt-1 text-slate-600">
-                            Choose this when the logo is valid, but the translation contains major or critical errors or appears to be unverified automatic translation.
-                        </p>
-                    </div>
-                </div>
-            </aside>
 
             <form
                 method="POST"
@@ -110,6 +99,24 @@
                     </div>
                 </div>
 
+                <aside class="rounded-md border border-slate-200 bg-slate-50 p-5">
+                    <h2 class="font-semibold text-slate-900">Which type of complaint should I choose?</h2>
+                    <div class="mt-4 grid gap-4 text-sm sm:grid-cols-2">
+                        <div>
+                            <h3 class="font-medium text-slate-900">Invalid logo attached to a translation</h3>
+                            <p class="mt-1 text-slate-600">
+                                Choose this when a PVTR logo appears on a translation but the displayed logo ID is not valid.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-slate-900">Valid logo, poor-quality translation</h3>
+                            <p class="mt-1 text-slate-600">
+                                Choose this when the logo is valid, but the translation contains major or critical errors or appears to be unverified automatic translation.
+                            </p>
+                        </div>
+                    </div>
+                </aside>
+
                 <div>
                     <label for="complaint_type" class="block text-sm font-medium text-slate-700">
                         <x-tooltip-label text="Choose the scenario that best matches what you are reporting.">
@@ -139,6 +146,7 @@
                 <fieldset
                     class="space-y-5 rounded-md border border-slate-200 bg-slate-50 p-5"
                     data-shared-location-fields
+                    @if (! $showSharedComplaintFields) hidden @endif
                 >
                     <legend class="px-1 text-sm font-medium text-slate-700">
                         Where to find the translation or logo use
@@ -168,6 +176,7 @@
                 <fieldset
                     class="space-y-5 rounded-md border border-slate-200 bg-slate-50 p-5"
                     data-poor-quality-fields
+                    @if (! $showPoorQualityFields) hidden @endif
                 >
                     <legend class="px-1 text-sm font-medium text-slate-700">
                         Poor-quality translation details
@@ -215,7 +224,11 @@
                     </div>
                 </fieldset>
 
-                <section class="space-y-5 rounded-md border border-amber-200 bg-amber-50 p-5" data-invalid-logo-fields>
+                <section
+                    class="space-y-5 rounded-md border border-amber-200 bg-amber-50 p-5"
+                    data-invalid-logo-fields
+                    @if (! $showInvalidLogoFields) hidden @endif
+                >
                     <div>
                         <h2 class="font-semibold text-amber-950">Invalid logo guidance</h2>
                         <p class="mt-1 text-sm text-amber-900">
@@ -251,7 +264,7 @@
                     </div>
                 </section>
 
-                <div>
+                <div data-complaint-statement-section @if (! $showSharedComplaintFields) hidden @endif>
                     <label for="statement" class="block text-sm font-medium text-slate-700">Statement of complaint</label>
                     <textarea
                         id="statement"
