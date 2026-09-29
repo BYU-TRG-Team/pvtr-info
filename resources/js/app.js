@@ -53,6 +53,7 @@ export const initComplaintForm = (
     const sharedLocationFields = form.querySelector('[data-shared-location-fields]');
     const poorQualityFields = form.querySelector('[data-poor-quality-fields]');
     const invalidLogoFields = form.querySelector('[data-invalid-logo-fields]');
+    const statementSection = form.querySelector('[data-complaint-statement-section]');
     const feedback = form.querySelector('[data-license-status-feedback]');
     const translationLocation = form.querySelector('[name="translation_location"]');
     const explanationSection = form.querySelector('[data-valid-license-explanation-section]');
@@ -64,6 +65,7 @@ export const initComplaintForm = (
         || !sharedLocationFields
         || !poorQualityFields
         || !invalidLogoFields
+        || !statementSection
         || !translationLocation
         || !explanationSection
         || !explanationField
@@ -190,6 +192,7 @@ export const initComplaintForm = (
         sharedLocationFields.hidden = !hasSelectedType;
         poorQualityFields.hidden = !isPoorQuality;
         invalidLogoFields.hidden = !isInvalidLogo;
+        statementSection.hidden = !hasSelectedType;
         translationLocation.required = hasSelectedType;
 
         poorQualityRequiredFields.forEach((field) => {

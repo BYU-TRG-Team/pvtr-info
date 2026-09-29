@@ -30,16 +30,44 @@ class ComplaintFilingTest extends TestCase
             ->assertSee('name="harm_type"', false);
     }
 
-    public function test_all_complaint_fields_are_visible_and_enabled_on_initial_load(): void
+    public function test_complaint_type_guidance_sits_between_license_and_type_fields(): void
     {
         $response = $this->get(route('complaints.create'))->assertOk();
         $html = $response->getContent();
 
-        $this->assertDoesNotMatchRegularExpression(
+        $licensePosition = strpos($html, 'name="license_number"');
+        $guidancePosition = strpos($html, 'Which type of complaint should I choose?');
+        $typePosition = strpos($html, 'name="complaint_type"');
+
+        $this->assertIsInt($licensePosition);
+        $this->assertIsInt($guidancePosition);
+        $this->assertIsInt($typePosition);
+        $this->assertTrue($licensePosition < $guidancePosition);
+        $this->assertTrue($guidancePosition < $typePosition);
+    }
+
+    public function test_complaint_form_renders_post_selection_sections_hidden_by_default(): void
+    {
+        $html = $this->get(route('complaints.create'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertMatchesRegularExpression(
+            '/<fieldset[^>]*data-shared-location-fields[^>]*hidden/s',
+            $html,
+        );
+        $this->assertMatchesRegularExpression(
             '/<fieldset[^>]*data-poor-quality-fields[^>]*hidden/s',
             $html,
         );
-        $this->assertStringNotContainsString(' disabled', $html);
+        $this->assertMatchesRegularExpression(
+            '/<section[^>]*data-invalid-logo-fields[^>]*hidden/s',
+            $html,
+        );
+        $this->assertMatchesRegularExpression(
+            '/<div[^>]*data-complaint-statement-section[^>]*hidden/s',
+            $html,
+        );
     }
 
     public function test_complaint_form_explains_both_reporting_scenarios(): void

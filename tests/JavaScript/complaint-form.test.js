@@ -34,6 +34,10 @@ const complaintFormMarkup = () => `
                 <textarea name="valid_license_explanation" data-required-for-valid-license></textarea>
             </div>
         </section>
+
+        <section data-complaint-statement-section>
+            <textarea name="statement"></textarea>
+        </section>
     </form>
 `;
 
@@ -61,6 +65,7 @@ describe('initComplaintForm', () => {
         const sharedLocation = form.querySelector('[data-shared-location-fields]');
         const poorQuality = form.querySelector('[data-poor-quality-fields]');
         const invalidLogo = form.querySelector('[data-invalid-logo-fields]');
+        const statementSection = form.querySelector('[data-complaint-statement-section]');
         const translationLocation = form.querySelector('[name="translation_location"]');
         const majorError = form.querySelector('[name="major_error"]');
         const harmType = form.querySelector('[name="harm_type"]');
@@ -73,6 +78,7 @@ describe('initComplaintForm', () => {
         expect(sharedLocation.hidden).toBe(true);
         expect(poorQuality.hidden).toBe(true);
         expect(invalidLogo.hidden).toBe(true);
+        expect(statementSection.hidden).toBe(true);
         expect(translationLocation.required).toBe(false);
         expect(majorError.required).toBe(false);
         expect(harmType.required).toBe(false);
@@ -83,6 +89,7 @@ describe('initComplaintForm', () => {
         expect(sharedLocation.hidden).toBe(false);
         expect(poorQuality.hidden).toBe(false);
         expect(invalidLogo.hidden).toBe(true);
+        expect(statementSection.hidden).toBe(false);
         expect(translationLocation.required).toBe(true);
         expect(majorError.required).toBe(true);
         expect(harmType.required).toBe(true);
@@ -94,6 +101,7 @@ describe('initComplaintForm', () => {
         expect(sharedLocation.hidden).toBe(false);
         expect(poorQuality.hidden).toBe(true);
         expect(invalidLogo.hidden).toBe(false);
+        expect(statementSection.hidden).toBe(false);
         expect(translationLocation.required).toBe(true);
         expect(majorError.required).toBe(false);
         expect(harmType.required).toBe(false);
